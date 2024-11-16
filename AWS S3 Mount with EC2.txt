@@ -5,13 +5,3 @@
    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
    unzip awscliv2.zip
    sudo ./aws/install
-5. Configure AWS using access and secret keys.
-6. Install S3 mount package on EC2.
-   sudo apt install s3fs
-7. go to home directory and create a new directory.
-8. Mount S3 bucket with the created directory
-   s3fs (bucket name) (directory name)
-9. Go to the created directory and we can view all the files uploaded inside bucket.
-   Now we can create and view files inside the mounted bucket. 
-10.We can unmount the s3 bucket from the directory by running the following command.
-   umount (/home/ubuntu/bucket)
