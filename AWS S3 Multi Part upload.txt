@@ -1,0 +1,61 @@
+Create a AWS Instance and S3 bucket.
+Create role for EC2 with S3 in IAM.
+Launch instance, Install and configure AWS CLI on the instance using following commands.  
+         curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+         unzip awscliv2.zip
+         sudo ./aws/install
+
+Download a file on present directory using wget (size at least 10MB)
+Create parts of the file using split command.
+         split -b (part size eg. 5M/10M/20M) (file name)
+
+Run ls -lrt command to see the splitted chunks of the file and their size.
+Run the followig command to create a multipart upload, It will create a upload ID, Save the credentials.
+         aws s3api create-multipart-upload --bucket (bucketname)  --key (filename)
+ 
+        "ServerSideEncryption": "AES256",
+        "Bucket": "ultimate2024",
+        "Key": "linuxmint-14-kde-dvd-64bit.iso",
+        "UploadId": "fTivLi4d.tMk3fH.JT_0MrCuOKOnQ8gKnXpwCjlIdu.B0ezVUvP5GQwhTZovYcPUOSMTLD2Cw8yTz.bXQsdgI8OizqVwQ9XvHLVJehTehH4-"
+
+Now upload individual body of the divided file using the following command, and save the generated Etags
+First body xaa:
+         aws s3api upload-part --bucket (bucketname) --key (main file name) --part-number 1 --body xaa --upload-id (upload ID-)
+  
+         "ServerSideEncryption": "AES256",
+         "ETag": "\"a8d25d69595302f9c37b62dddb1a9bad\""                    
+
+Secod body xab:
+         aws s3api upload-part --bucket (bucketname) --key (main file name) --part-number 2 --body xab --upload-id (upload ID-)
+
+         "ServerSideEncryption": "AES256",
+         "ETag": "\"5c51dff377313e1e9ce4d78775265307\""
+
+Third body xac:
+         aws s3api upload-part --bucket (bucketname) --key (main file name) --part-number 2 --body xab --upload-id (upload ID-)
+
+        "ServerSideEncryption": "AES256",
+        "ETag": "\"5c51dff377313e1e9ce4d78775265307\""
+
+Now create a JSON file to upload all this Etags in the same and upload the divided bodies into single file to S3 bucket.
+        vi (filename).json
+{
+  "Parts": [
+    {"PartNumber": 1, "ETag": "Etag ID for body xaa"},
+    {"PartNumber": 2, "ETag": "Etag ID for body xab"},
+    {"PartNumber": 3, "ETag": "Etag ID for body xac"}
+    ]
+}
+
+Now upload the divided bodies to S3 bucket completely using the json file by using command
+         aws s3api complete-multipart-upload --multipart-upload file://(json file name).json --bucket (bucket name) --key (main file name) --       upload-id (upload ID-)
+
+Now we can check the S3 bucket for uploaded file.
+
+                        
+
+
+
+
+
+
